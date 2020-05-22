@@ -5,6 +5,7 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
@@ -17,6 +18,10 @@ public class Balloon extends ImageView implements Animator.AnimatorListener, Val
 
     private static final String TAG = "Balloon";
 
+    private BalloonListener mBalloonListener;
+
+    private boolean mPopped;
+
 
     private ValueAnimator mAnimator;
 
@@ -26,6 +31,7 @@ public class Balloon extends ImageView implements Animator.AnimatorListener, Val
 
     public Balloon(Context context, int color, int rawHeight) {
         super(context);
+        mBalloonListener= (BalloonListener) context;
 
         this.setImageResource(R.drawable.balloon);
         this.setColorFilter(color);
@@ -62,6 +68,11 @@ public class Balloon extends ImageView implements Animator.AnimatorListener, Val
     @Override
     public void onAnimationEnd(Animator animation) {
 
+        if(!mPopped)
+        {
+            mBalloonListener.popBallon(this,false);
+        }
+
     }
 
     @Override
@@ -82,4 +93,23 @@ public class Balloon extends ImageView implements Animator.AnimatorListener, Val
         setY((float) animation.getAnimatedValue());
 
     }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        if (!mPopped && event.getAction()==MotionEvent.ACTION_DOWN)
+        {
+            mBalloonListener.popBallon(this,true);
+            mPopped=true;
+            mAnimator.cancel();
+        }
+        return super.onTouchEvent(event);
+    }
+
+    public interface BalloonListener
+    {
+        void popBallon(Balloon balloon, boolean userTouch);
+
+    }
+
 }

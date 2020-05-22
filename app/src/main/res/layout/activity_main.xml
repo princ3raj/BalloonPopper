@@ -69,6 +69,7 @@
         android:background="@color/lightGrey">
 
         <Button
+            android:onClick="goButtonClickHandler"
             android:id="@+id/go_button"
             style="?android:borderlessButtonStyle"
             android:layout_width="wrap_content"
